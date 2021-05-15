@@ -15,6 +15,7 @@ public class Cliente {
     private static String discocliente;
 
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, MalformedURLException {
+        System.out.println("Prueba cliente, levanta su propio servicio...");
         String URLdiscoCliente = "rmi://" + direccionServicio + ":" + puertoServicio + "/discocliente/";
         arrancarRegistro(puertoServicio);
         Utils.setCodeBase(ServicioDiscoClienteInterface.class);
