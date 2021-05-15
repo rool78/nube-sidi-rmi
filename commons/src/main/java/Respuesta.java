@@ -1,7 +1,8 @@
 public enum Respuesta {
 
+    OK(0),
     USUARIO_YA_REGISTRADO(-1),
-    OK(0)
+    USUARIO_O_PASSWORD_INCORRECTO(-2)
     ;
 
     private final int codigo;

@@ -1,8 +1,6 @@
-import interfaces.cliente.ServicioDiscoClienteInterface;
 import interfaces.servidor.ServicioAutenticacionInterface;
 
 import java.net.MalformedURLException;
-import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -10,10 +8,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class Servidor {
-
-    public int puertoServidor = 8080;
-    private static String direccion = "localhost";
-
 
     public static void main(String[] args) throws RemoteException, MalformedURLException, NotBoundException {
         new Servidor().launch();
@@ -24,19 +18,17 @@ public class Servidor {
     }
 
     private void launch() throws RemoteException, MalformedURLException, NotBoundException {
-        arrancarRegistro(puertoServidor);
+        arrancarRegistro(ConstantesRMI.PUERTO_SERVIDOR);
         Utils.setCodeBase(ServicioAutenticacionInterface.class);
 
-        //Levantar Datos, el almacen, el constructor mantendra la persistencia
+        //Levantamos servicio datos
         ServicioDatosImpl servicioDatos = new ServicioDatosImpl();
-        String direccionServicioDatos = "rmi://" + direccion + ":" + puertoServidor + "/datos";
-        Naming.rebind(direccionServicioDatos, servicioDatos);
+        Naming.rebind(ConstantesRMI.DIRECCION_DATOS, servicioDatos);
         System.out.println("Operacion: Servicio Datos preparado con exito");
 
-        //Levantar Autenticador
+        //Levantamos servicio autenticador
         ServicioAutenticacionImpl objetoAutenticador = new ServicioAutenticacionImpl();
-        String direccionServicioAutenticacion = "rmi://" + direccion + ":" + puertoServidor + "/autenticador";
-        Naming.rebind(direccionServicioAutenticacion, objetoAutenticador);
+        Naming.rebind(ConstantesRMI.DIRECCION_AUTENTICADOR, objetoAutenticador);
         System.out.println("Operacion: Servicio Autenticador preparado con exito");
 
     }

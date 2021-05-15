@@ -1,13 +1,9 @@
 import interfaces.servidor.ServicioDatosInterface;
 
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDatosInterface {
 
@@ -21,17 +17,22 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
 
     @Override
     public int autenticarCliente(String nombre, String password) throws RemoteException {
-        return 0;
+        if (clientesRegistrados.containsKey(nombre)) {
+            Usuario usuario = clientesRegistrados.get(nombre);
+            if (usuario.getPassword().equals(password)) {
+                System.out.println("Login correcto");
+                return usuario.getId();
+            }
+        }
+            return Respuesta.USUARIO_O_PASSWORD_INCORRECTO.getCodigo();
     }
 
     @Override
-    public int registrarCliente(String nombre, String password) throws RemoteException, MalformedURLException, NotBoundException {
-        System.out.println("RegistroCliente Datos");
+    public int registrarCliente(String nombre, String password) throws RemoteException {
         if (clientesRegistrados.containsKey(nombre)) {
             System.out.println("Ya existe un Usuario con ese nombre");
             return Respuesta.USUARIO_YA_REGISTRADO.getCodigo();
         }
-
         Usuario nuevoUsuario = new Usuario(nombre, password, generateNewId());
         clientesRegistrados.put(nombre, nuevoUsuario);
         System.out.println("Usuario registrado con exito");
@@ -51,6 +52,7 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
 
     @Override
     public int autenticarRepositorio(String nombre) throws RemoteException {
+
         return 0;
     }
 

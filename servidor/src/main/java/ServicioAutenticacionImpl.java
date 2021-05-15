@@ -9,42 +9,42 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class ServicioAutenticacionImpl extends UnicastRemoteObject implements ServicioAutenticacionInterface {
 
-    private ServicioDatosInterface servicioDatos;
-    private int puerto = 8080;
+    private final ServicioDatosInterface servicioDatos;
 
     protected ServicioAutenticacionImpl() throws RemoteException, MalformedURLException, NotBoundException {
         super();
         //Buscamos el servicio de datos
-        String URLRegistro = "rmi://localhost:" + puerto + "/datos";
-        servicioDatos = (ServicioDatosInterface) Naming.lookup(URLRegistro);
+        servicioDatos = (ServicioDatosInterface) Naming.lookup(ConstantesRMI.DIRECCION_DATOS);
     }
 
     @Override
     public int autenticarCliente(String nombre, String password) throws RemoteException {
-        return 0;
-    }
-
-    @Override
-    public int registrarCliente(String nombre, String password) throws RemoteException, MalformedURLException, NotBoundException {
-        System.out.println("RegistroCliente Auth");
-        int respuesta = servicioDatos.registrarCliente(nombre, password);
-
-        System.out.println("Procesamos respuesta: " + respuesta);
-
-        System.out.println("Prueba listar clientes, borrar...");
-        System.out.println(servicioDatos.listarClientes());
-
+        System.out.println("##autenticarCliente");
+        int respuesta = servicioDatos.autenticarCliente(nombre, password);
+        if (respuesta >= 0) {
+            System.out.println("Usuario autenticado satisfactoriamente");
+        } else {
+            System.out.println("Usuario o contareña incorrectos");
+        }
         return respuesta;
     }
 
     @Override
+    public int registrarCliente(String nombre, String password) throws RemoteException, MalformedURLException, NotBoundException {
+        System.out.println("##registrarCliente");
+        return servicioDatos.registrarCliente(nombre, password);
+    }
+
+    @Override
     public int autenticarRepositorio(String nombre) throws RemoteException {
-        return 0;
+        int respuesta = servicioDatos.autenticarRepositorio(nombre);
+        return respuesta;
     }
 
     @Override
     public int registrarRepositorio(String nombre) throws RemoteException {
-        return 0;
+        int respuesta = servicioDatos.registrarRepositorio(nombre);
+        return respuesta;
     }
 
     @Override
