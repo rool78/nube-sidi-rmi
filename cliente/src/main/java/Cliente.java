@@ -9,9 +9,8 @@ import java.rmi.registry.Registry;
 
 public class Cliente {
 
-    private static int puertoServicio = 8080;
-    private static Registry registryServicio;
-    private static String direccionServicio = "localhost";
+    private final static int puertoServicio = 8080;
+    private final static String direccionServicio = "localhost";
 
     private static String discocliente;
 
@@ -28,13 +27,14 @@ public class Cliente {
     }
 
     public static void arrancarRegistro(int numPuertoRMI) throws RemoteException {
+        Registry registryServicio;
         try {
             registryServicio = LocateRegistry.getRegistry(numPuertoRMI);
             registryServicio.list();
         }
         catch (RemoteException e) {
             System.out.println("El registro RMI no se puede localizar en el puerto "+ numPuertoRMI);
-            registryServicio =	LocateRegistry.createRegistry(numPuertoRMI);
+            LocateRegistry.createRegistry(numPuertoRMI);
             System.out.println("Registro RMI creado en el puerto " + numPuertoRMI);
         }
     }
