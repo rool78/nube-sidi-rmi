@@ -1,4 +1,4 @@
-package modelo;
+package commons.modelo;
 
 import java.util.Objects;
 
@@ -54,7 +54,7 @@ public class Usuario {
 
     @Override
     public String toString() {
-        return "modelo.Usuario{" +
+        return "commons.modelo.Usuario{" +
                 "nombre='" + nombre + '\'' +
                 ", password='" + password + '\'' +
                 ", id=" + id +

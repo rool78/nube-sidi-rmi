@@ -1,3 +1,5 @@
+package commons;
+
 public enum Respuesta {
 
     OK(0),
@@ -6,6 +8,7 @@ public enum Respuesta {
     NO_HAY_REPOSITORIOS_EN_LINEA(-3),
     ERROR_AL_CREAR_CARPETA(-4),
     ERROR_AUTENTICACION(-5),
+    ERROR(-6)
     ;
 
     private final int codigo;

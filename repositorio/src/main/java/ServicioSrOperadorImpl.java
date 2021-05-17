@@ -1,7 +1,11 @@
-import interfaces.repositorio.ServicioSrOperadorInterface;
+import commons.Fichero;
+import commons.Respuesta;
+import commons.interfaces.cliente.ServicioDiscoClienteInterface;
+import commons.interfaces.repositorio.ServicioSrOperadorInterface;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -27,17 +31,16 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 
     @Override
     public int bajarFichero(String URLdiscoCliente, String nombreFichero, int idCliente) throws MalformedURLException, RemoteException, NotBoundException {
-        //conversion implicita a cadena ""+idCliente
-//        Fichero fichero= new Fichero(""+idCliente,nombreFichero,""+idCliente);
-//        ServicioDiscoClienteInterface servicioDiscoCliente =(ServicioDiscoClienteInterface) Naming.lookup(URLdiscoCliente);
+        Fichero fichero = new Fichero("" + idCliente, nombreFichero, "" + idCliente);
+        ServicioDiscoClienteInterface servicioDiscoCliente = (ServicioDiscoClienteInterface) Naming.lookup(URLdiscoCliente);
 
-//        if (servicioDiscoCliente.bajarFichero(fichero,idCliente)==false)
-//        {
-//            System.out.println("Error en el envío (Checksum failed), intenta de nuevo");
-//        }
-//        else{
-//            System.out.println("Fichero: " + nombreFichero + " enviado");
-//        }
+        int respuesta = servicioDiscoCliente.bajarFichero(fichero, idCliente);
+
+        if (respuesta == Respuesta.OK.getCodigo()) {
+            System.out.println("Fichero: " + nombreFichero + " enviado");
+        } else {
+            System.out.println("Error en el envío (Checksum failed), intenta de nuevo");
+        }
         return 0;
     }
 }

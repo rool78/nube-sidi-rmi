@@ -1,5 +1,6 @@
-import interfaces.servidor.ServicioAutenticacionInterface;
-import interfaces.servidor.ServicioDatosInterface;
+import commons.ConstantesRMI;
+import commons.interfaces.servidor.ServicioAutenticacionInterface;
+import commons.interfaces.servidor.ServicioDatosInterface;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;

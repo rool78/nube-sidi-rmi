@@ -1,3 +1,5 @@
+package commons;
+
 public class ConstantesRMI {
 
     public static final int PUERTO_SERVIDOR = 8080;

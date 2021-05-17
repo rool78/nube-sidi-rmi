@@ -1,14 +1,17 @@
-import interfaces.repositorio.ServicioSrOperadorInterface;
-import interfaces.servidor.ServicioDatosInterface;
-import modelo.Repositorio;
-import modelo.Usuario;
+import commons.ConstantesRMI;
+import commons.modelo.Repositorio;
+import commons.Respuesta;
+import commons.modelo.Usuario;
+import commons.interfaces.repositorio.ServicioSrOperadorInterface;
+import commons.interfaces.servidor.ServicioDatosInterface;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDatosInterface {
 
@@ -83,11 +86,21 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
         if (respuesta == Respuesta.ERROR_AL_CREAR_CARPETA.getCodigo()) {
             return respuesta;
         }
-        return Respuesta.OK.getCodigo();
+        return nuevoUsuario.getId();
     }
 
     public String listarClientes() {
         return clientesRegistrados.toString();
+    }
+
+    @Override
+    public int obtenerIdRepositorioDeCliente(int clienteId) {
+        for (Usuario u: clientesEnLinea) {
+            if (u.getId() == clienteId) {
+                return u.getRepositorio().getId();
+            }
+        }
+        return Respuesta.ERROR.getCodigo();
     }
 
     @Override

@@ -1,4 +1,5 @@
-import interfaces.cliente.ServicioDiscoClienteInterface;
+import commons.Fichero;
+import commons.interfaces.cliente.ServicioDiscoClienteInterface;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -10,9 +11,8 @@ public class ServicioDiscoClienteImpl extends UnicastRemoteObject implements Ser
     }
 
     @Override
-    public int bajarFichero(int fichero) throws RemoteException {
-        System.out.println("Has conseguido llegar aquí, enohorabuena... " + fichero);
+    public int bajarFichero(Fichero fichero, int idCliente) throws RemoteException {
 
-        return 200;
+        return 0;
     }
 }

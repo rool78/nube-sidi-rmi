@@ -1,3 +1,5 @@
+package commons;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -5,9 +7,7 @@ import java.rmi.registry.Registry;
 public class Utils {
     public static final String CODEBASE = "java.rmi.server.codebase";
 
-    // Class<?> no esta parametrizada, cualquier clase pediremos su ruta
     public static void setCodeBase(Class<?> c) {
-
         //Calculara la ruta donde este cargada la clase
         //A la clase donde esta el codigo fuente, dame la ubicacion y pasala a string
         String ruta = c.getProtectionDomain().getCodeSource().getLocation().toString();

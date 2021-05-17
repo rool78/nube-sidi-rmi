@@ -1,4 +1,4 @@
-package interfaces.servidor;
+package commons.interfaces.servidor;
 
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;

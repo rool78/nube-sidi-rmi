@@ -1,5 +1,8 @@
-import interfaces.repositorio.ServicioSrOperadorInterface;
-import interfaces.servidor.ServicioAutenticacionInterface;
+import commons.ConstantesRMI;
+import commons.Gui;
+import commons.Utils;
+import commons.interfaces.repositorio.ServicioSrOperadorInterface;
+import commons.interfaces.servidor.ServicioAutenticacionInterface;
 
 import java.net.MalformedURLException;
 import java.rmi.ConnectException;
@@ -55,7 +58,7 @@ public class RepositorioMain {
             } while (opcion != 3);
         } catch (ConnectException e) {
             System.out.println("Error de conexion, el servidor no esta disponible, vuelva a intentarlo mas tarde");
-//           Gui.entradaTexto("Pulse enter para finalizar...");
+//           commons.Gui.entradaTexto("Pulse enter para finalizar...");
         } catch (MalformedURLException | NotBoundException | RemoteException e) {
             e.printStackTrace();
         }
