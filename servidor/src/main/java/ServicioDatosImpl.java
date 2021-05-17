@@ -17,11 +17,9 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
 
     private List<Repositorio> repositoriosRegistrados = new ArrayList<>();
     private List<Repositorio> repositoriosEnLinea = new ArrayList<>();
-    
+
 //    private Map<Repositorio, List<Usuario>> clientesEnRepositorios = new HashMap<>();
 //    private Map<Usuario, List<Metadatos>> clientFiles = new HashMap<>();
-
-    private List<Usuario> usuarios = new ArrayList<>();
 
     private int idUsuarios = 0;
     private int idRepositorios = 0;
@@ -49,6 +47,7 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
 
     @Override
     public int registrarCliente(String nombre, String password) throws RemoteException, MalformedURLException, NotBoundException {
+        System.out.println("Registrar cliente datos");
         for (Usuario u : clientesRegistrados) {
             if (u.getNombre().equals(nombre)) {
                 System.out.println("Ya existe un Usuario con ese nombre");
@@ -77,12 +76,6 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
 
         System.out.println("Usuario registrado con exito");
 
-//        if (clientesEnRepositorios.containsKey(repositoriosEnLinea.get(asignacionAleatoria))) {
-//            List<Usuario> list = clientesEnRepositorios.get(repositoriosEnLinea.get(asignacionAleatoria));
-//            list.add(nuevoUsuario);
-//        } else {
-//            clientesEnRepositorios.put(repositoriosEnLinea.get(asignacionAleatoria), Collections.singletonList(nuevoUsuario));
-//        }
         //Creamos carpeta
         ServicioSrOperadorInterface servidorSrOperador = (ServicioSrOperadorInterface) Naming.lookup(ConstantesRMI.DIRECCION_SR_OPERADOR);
         int respuesta = servidorSrOperador.crearCarpeta(nuevoUsuario.getId());
@@ -107,11 +100,14 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
     public int registrarRepositorio(String nombre) throws RemoteException {
         for (Repositorio r : repositoriosRegistrados) {
             if (r.getNombre().equals(nombre)) {
+                System.out.println("Nombre del repositorio ya en uso");
                 return Respuesta.NOMBRE_YA_EN_USO.getCodigo();
             }
         }
         Repositorio nuevoRepositorio = new Repositorio(nombre, generarIdRepositorio());
         repositoriosRegistrados.add(nuevoRepositorio);
+        repositoriosEnLinea.add(nuevoRepositorio);
+        System.out.println("Repositorio creado correctamente");
         return nuevoRepositorio.getId();
     }
 

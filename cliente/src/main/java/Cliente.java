@@ -1,3 +1,4 @@
+import interfaces.cliente.ServicioDiscoClienteInterface;
 import interfaces.servidor.ServicioAutenticacionInterface;
 
 import java.net.MalformedURLException;
@@ -11,12 +12,27 @@ public class Cliente {
 
     private ServicioAutenticacionInterface servicioAutenticacion = null;
 
-    public Cliente() {
+    public Cliente() throws MalformedURLException, RemoteException {
+        levantarServicios();
+    }
+
+    public static void main(String[] args) throws RemoteException, MalformedURLException, NotBoundException {
+        new Cliente().launch();
+
+    }
+
+    private void levantarServicios() throws MalformedURLException, RemoteException {
+        Utils.arrancarRegistro(ConstantesRMI.PUERTO_CLIENTE);
+        Utils.setCodeBase(ServicioDiscoClienteInterface.class);
+        ServicioDiscoClienteImpl servicioDiscoCliente = new ServicioDiscoClienteImpl();
+        Naming.rebind(ConstantesRMI.DIRECCION_DISCO_CLIENTE, servicioDiscoCliente);
     }
 
     private void launch() throws MalformedURLException, NotBoundException, RemoteException {
         int opcion = 0;
-
+        servicioAutenticacion = (ServicioAutenticacionInterface) Naming.lookup(ConstantesRMI.DIRECCION_AUTENTICADOR);
+        //todo borrar, registro un cliente
+        servicioAutenticacion.registrarCliente("rol", "1234");
         do {
             opcion = Gui.menu("Acceso de Cliente",new String[]
                     {"Registrar un nuevo usuario","Autenticarse en el sistema(hacer login)"});
@@ -60,9 +76,9 @@ public class Cliente {
 
             int respuesta = servicioAutenticacion.autenticarCliente(nombre, password);
             if (respuesta >= 0) {
-                System.out.println("modelo.Usuario autenticado satisfactoriamente");
+                System.out.println("Usuario autenticado satisfactoriamente");
             } else {
-                System.out.println("modelo.Usuario o contareña incorrectos");
+                System.out.println("Usuario o contareña incorrectos");
             }
         }
 
@@ -78,20 +94,4 @@ public class Cliente {
             System.out.println("Registro RMI creado en el puerto " + numPuertoRMI);
         }
     }
-
-
-    public static void main(String[] args) throws RemoteException, MalformedURLException, NotBoundException {
-        new Cliente().launch();
-
-//        String URLdiscoCliente = "rmi://" + direccionServicio + ":" + puertoServicio + "/discocliente/";
-//        arrancarRegistro(puertoServicio);
-//        Utils.setCodeBase(ServicioDiscoClienteInterface.class);
-//        ServicioDiscoClienteImpl servicioDiscoCliente = new ServicioDiscoClienteImpl();
-//        Naming.rebind(URLdiscoCliente, servicioDiscoCliente);
-//        System.out.println("Operacion: Servicio Disco Cliente preparado con exito");
-
-//        servicioDiscoCliente.bajarFichero(1);
-
-    }
-
 }

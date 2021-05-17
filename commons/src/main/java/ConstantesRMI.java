@@ -8,12 +8,12 @@ public class ConstantesRMI {
 
     public static final String DIRECCION_AUTENTICADOR = "rmi://" + IP + ":" + PUERTO_SERVIDOR + "/autenticador";
     public static final String DIRECCION_DATOS = "rmi://" + IP + ":" + PUERTO_SERVIDOR + "/datos";
-    public static final String DIRECCION_GESTOR = "rmi://" + IP + ":" + PUERTO_SERVIDOR + "/datos";
+    public static final String DIRECCION_GESTOR = "rmi://" + IP + ":" + PUERTO_SERVIDOR + "/gestor";
 
-    public static final String DIRECCION_DISCO_CLIENTE = "rmi://" + IP + ":" + PUERTO_CLIENTE + "/discocliente/";
+    public static final String DIRECCION_DISCO_CLIENTE = "rmi://" + IP + ":" + PUERTO_CLIENTE + "/discocliente";
 
-    public static final String DIRECCION_CL_OPERADOR = "rmi://" + IP + ":" + PUERTO_REPOSITORIO + "/discocliente/";
-    public static final String DIRECCION_SR_OPERADOR = "rmi://" + IP + ":" + PUERTO_REPOSITORIO + "/discocliente/";
+    public static final String DIRECCION_CL_OPERADOR = "rmi://" + IP + ":" + PUERTO_REPOSITORIO + "/cloperador";
+    public static final String DIRECCION_SR_OPERADOR = "rmi://" + IP + ":" + PUERTO_REPOSITORIO + "/sroperador";
 
 
 }

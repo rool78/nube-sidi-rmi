@@ -1,3 +1,7 @@
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
 public class Utils {
     public static final String CODEBASE = "java.rmi.server.codebase";
 
@@ -17,6 +21,18 @@ public class Utils {
             ruta = path + " " + ruta;
         }
         System.setProperty(CODEBASE,ruta);
+    }
+
+    public static void arrancarRegistro(int numPuertoRMI) throws RemoteException {
+        Registry registryServicio;
+        try {
+            registryServicio = LocateRegistry.getRegistry(numPuertoRMI);
+            registryServicio.list();
+        } catch (RemoteException e) {
+            System.out.println("El registro RMI no se puede localizar en el puerto " + numPuertoRMI);
+            LocateRegistry.createRegistry(numPuertoRMI);
+            System.out.println("Registro RMI creado en el puerto " + numPuertoRMI);
+        }
     }
 
 }

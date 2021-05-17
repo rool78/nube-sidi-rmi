@@ -1,3 +1,4 @@
+import interfaces.repositorio.ServicioSrOperadorInterface;
 import interfaces.servidor.ServicioAutenticacionInterface;
 
 import java.net.MalformedURLException;
@@ -10,18 +11,35 @@ public class RepositorioMain {
 
     private ServicioAutenticacionInterface servicioAutenticacion;
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws MalformedURLException, RemoteException {
+        new RepositorioMain().launch();
     }
 
-    public RepositorioMain() {
+    public RepositorioMain() throws MalformedURLException, RemoteException {
+        levantarServicios();
+    }
 
+    private void levantarServicios() throws RemoteException, MalformedURLException {
+        Utils.arrancarRegistro(ConstantesRMI.PUERTO_REPOSITORIO);
+        Utils.setCodeBase(ServicioSrOperadorInterface.class);
+
+        //levantamos servicio SrOperador
+        ServicioSrOperadorImpl servicioSrOperador = new ServicioSrOperadorImpl();
+        Naming.rebind(ConstantesRMI.DIRECCION_SR_OPERADOR, servicioSrOperador);
+        System.out.println("ServicioSrOperador preparado con exito");
+
+        //levantamos servicio ClOperador
+        ServicioClOperadorImpl servicioClOperador = new ServicioClOperadorImpl();
+        Naming.rebind(ConstantesRMI.DIRECCION_CL_OPERADOR, servicioClOperador);
+        System.out.println("ServicioClOperador preparado con exito");
     }
 
     public void launch() {
-// si el servidor no esta disponible, cerramos informando de ello
+
         try {
             servicioAutenticacion = (ServicioAutenticacionInterface) Naming.lookup(ConstantesRMI.DIRECCION_AUTENTICADOR);
+            //todo borrar creamos repo directamente
+            servicioAutenticacion.registrarRepositorio("repo");
 
             int opcion;
             do {

@@ -14,11 +14,14 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 
     @Override
     public int crearCarpeta(int idCliente) throws RemoteException {
+        System.out.println("##Crear carpeta idCliente: " + idCliente);
         File carpeta = new File("" + idCliente);
+        System.out.println("Carpeta: " + carpeta.getAbsolutePath());
         if (!carpeta.mkdir()) {
             System.out.println("Carpeta creada correctamente");
             return Respuesta.OK.getCodigo();
         }
+        System.out.println("Error al crear la carpeta");
         return Respuesta.ERROR_AL_CREAR_CARPETA.getCodigo();
     }
 
