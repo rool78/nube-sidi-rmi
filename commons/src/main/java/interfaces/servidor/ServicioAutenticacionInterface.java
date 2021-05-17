@@ -15,8 +15,8 @@ public interface ServicioAutenticacionInterface extends Remote {
 
     public int registrarRepositorio(String nombre) throws RemoteException;
 
-    public void desconectarCliente(int sesion) throws RemoteException;
+    public void desconectarCliente(String nombre) throws RemoteException;
 
-    public void desconectarRepositorio(int sesion) throws RemoteException;
+    public void desconectarRepositorio(String nombre) throws RemoteException;
 
 }

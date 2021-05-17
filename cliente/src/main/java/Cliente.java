@@ -59,6 +59,11 @@ public class Cliente {
             String password = Gui.entradaTexto("Introduce tu contraseña:");
 
             int respuesta = servicioAutenticacion.autenticarCliente(nombre, password);
+            if (respuesta >= 0) {
+                System.out.println("modelo.Usuario autenticado satisfactoriamente");
+            } else {
+                System.out.println("modelo.Usuario o contareña incorrectos");
+            }
         }
 
     }

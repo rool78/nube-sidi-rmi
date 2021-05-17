@@ -13,20 +13,13 @@ public class ServicioAutenticacionImpl extends UnicastRemoteObject implements Se
 
     protected ServicioAutenticacionImpl() throws RemoteException, MalformedURLException, NotBoundException {
         super();
-        //Buscamos el servicio de datos
         servicioDatos = (ServicioDatosInterface) Naming.lookup(ConstantesRMI.DIRECCION_DATOS);
     }
 
     @Override
     public int autenticarCliente(String nombre, String password) throws RemoteException {
         System.out.println("##autenticarCliente");
-        int respuesta = servicioDatos.autenticarCliente(nombre, password);
-        if (respuesta >= 0) {
-            System.out.println("Usuario autenticado satisfactoriamente");
-        } else {
-            System.out.println("Usuario o contareña incorrectos");
-        }
-        return respuesta;
+        return servicioDatos.autenticarCliente(nombre, password);
     }
 
     @Override
@@ -37,23 +30,25 @@ public class ServicioAutenticacionImpl extends UnicastRemoteObject implements Se
 
     @Override
     public int autenticarRepositorio(String nombre) throws RemoteException {
-        int respuesta = servicioDatos.autenticarRepositorio(nombre);
-        return respuesta;
+        return servicioDatos.autenticarRepositorio(nombre);
     }
 
     @Override
     public int registrarRepositorio(String nombre) throws RemoteException {
-        int respuesta = servicioDatos.registrarRepositorio(nombre);
-        return respuesta;
+        return servicioDatos.registrarRepositorio(nombre);
     }
 
     @Override
-    public void desconectarCliente(int sesion) throws RemoteException {
-
+    public void desconectarCliente(String nombre) throws RemoteException {
+        servicioDatos.desconectarCliente(nombre);
+//        for (Usuario u: clien
+//             ) {
+//
+//        }
     }
 
     @Override
-    public void desconectarRepositorio(int sesion) throws RemoteException {
-
+    public void desconectarRepositorio(String nombre) throws RemoteException {
+        servicioDatos.desconectarRepositorio(nombre);
     }
 }
