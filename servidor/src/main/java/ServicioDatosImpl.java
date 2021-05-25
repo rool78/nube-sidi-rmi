@@ -94,19 +94,39 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
     }
 
     @Override
-    public int obtenerIdRepositorioDeCliente(int clienteId) {
+    public String obtenerIdRepositorioDeCliente(int clienteId) {
         for (Usuario u: clientesEnLinea) {
             if (u.getId() == clienteId) {
-                return u.getRepositorio().getId();
+                return  ConstantesRMI.DIRECCION_CL_OPERADOR + "/" + u.getRepositorio().getId();
             }
         }
-        return Respuesta.ERROR.getCodigo();
+        return "";
     }
 
     @Override
     public int autenticarRepositorio(String nombre) throws RemoteException {
-        //TODO repos en linea??
-        return 0;
+        Repositorio repositorioParaAutenticar = null;
+        boolean repositorioRegistrado = false;
+        for (Repositorio r: repositoriosRegistrados) {
+            if (r.getNombre().equals(nombre)) {
+                repositorioParaAutenticar = r;
+                repositorioRegistrado = true;
+            }
+        }
+        if (!repositorioRegistrado) {
+            System.out.println("El repositorio no esta registrado");
+            return Respuesta.ERROR_AUTENTICACION.getCodigo();
+        }
+        for (Repositorio r: repositoriosEnLinea) {
+            if (r.getNombre().equals(repositorioParaAutenticar.getNombre())) {
+                System.out.println("El repositorio ya estaba en linea");
+                return r.getId();
+            }
+        }
+        //Lo añadimos a la lista de repositorios en linea
+        repositoriosEnLinea.add(repositorioParaAutenticar);
+
+        return repositorioParaAutenticar.getId();
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.util.List;
 public interface ServicioGestorInterface extends Remote {
 
     //todo objeto datos?
-    public int subirFichero(String nombreFichero,int idSesionCliente) throws RemoteException, MalformedURLException, NotBoundException;
+    public String subirFichero(int idSesionCliente) throws RemoteException, MalformedURLException, NotBoundException;
 
     public String bajarFichero(String URLdiscoCliente,int idFichero,int idSesionCliente) throws RemoteException, MalformedURLException, NotBoundException;
 

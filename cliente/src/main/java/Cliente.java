@@ -158,18 +158,16 @@ public class Cliente {
             //Solicitamos la URL del ServicioClOperador
             ServicioGestorInterface servicioGestor = (ServicioGestorInterface) Naming.lookup(ConstantesRMI.DIRECCION_GESTOR);
 
-            //Le pasamos el nombre del fichero y el id de sesion y Gestor ya se encargara de colocar los metadatos
-            //Desde esta llamada podriamos pasar los metadatos como el peso o el ckecksum con los metodos de Fichero
-            //De todas formas el gestor va a poder conseguir el idRepo el nombreRepo,idCliente,nombreCliente con
-            //tan solo miSesion con ese dato que pida los datos al servicioDatos
-            int respuestaGestor = servicioGestor.subirFichero(nombreFichero, idSesion);
+            //Solicitamos la subida del fichero al gestor, nos va a devolver el Id del repositorio asociado al cliente
+            String url = servicioGestor.subirFichero(idSesion);
 
-            if (respuestaGestor != Respuesta.OK.getCodigo()) {
-                System.out.println("Error en la subida del fichero");
-                return;
-            }
+            //TODO obtener url repositorio e realizar una subida
+            //Deberiamos obtener la url del repositorio
+            //rmi://%s:%d/%s/%s
+
             Fichero fichero = new Fichero(nombreFichero, this.nombre);
 
+            //Tenemos que buscar el servicio ClOperador
             ServicioClOperadorInterface servicioClOperador = (ServicioClOperadorInterface) Naming.lookup(ConstantesRMI.DIRECCION_CL_OPERADOR);
 
             int respuestaCl = servicioClOperador.subirFichero(fichero);
