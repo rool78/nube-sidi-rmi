@@ -37,9 +37,9 @@ public class Cliente {
 
     private void launch() throws MalformedURLException, NotBoundException, RemoteException {
         int opcion = 0;
-        servicioAutenticacion = (ServicioAutenticacionInterface) Naming.lookup(ConstantesRMI.DIRECCION_AUTENTICADOR);
+//        servicioAutenticacion = (ServicioAutenticacionInterface) Naming.lookup(ConstantesRMI.DIRECCION_AUTENTICADOR);
         //todo borrar, registro un cliente
-        servicioAutenticacion.registrarCliente("rol", "1234");
+//        servicioAutenticacion.registrarCliente("rol", "1234");
         do {
             opcion = Gui.menu("Acceso de Cliente", new String[]
                     {"Registrar un nuevo usuario", "Autenticarse en el sistema(hacer login)"});
@@ -158,17 +158,14 @@ public class Cliente {
             //Solicitamos la URL del ServicioClOperador
             ServicioGestorInterface servicioGestor = (ServicioGestorInterface) Naming.lookup(ConstantesRMI.DIRECCION_GESTOR);
 
+
+            //TODO obtener url repositorio y realizar una subida
             //Solicitamos la subida del fichero al gestor, nos va a devolver el Id del repositorio asociado al cliente
             String url = servicioGestor.subirFichero(idSesion);
-
-            //TODO obtener url repositorio e realizar una subida
-            //Deberiamos obtener la url del repositorio
-            //rmi://%s:%d/%s/%s
-
             Fichero fichero = new Fichero(nombreFichero, this.nombre);
 
             //Tenemos que buscar el servicio ClOperador
-            ServicioClOperadorInterface servicioClOperador = (ServicioClOperadorInterface) Naming.lookup(ConstantesRMI.DIRECCION_CL_OPERADOR);
+            ServicioClOperadorInterface servicioClOperador = (ServicioClOperadorInterface) Naming.lookup(url);
 
             int respuestaCl = servicioClOperador.subirFichero(fichero);
 
