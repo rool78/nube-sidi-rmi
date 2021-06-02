@@ -27,9 +27,14 @@ public class Servidor {
         System.out.println("Servicio Datos preparado con exito");
 
         //Levantamos servicio autenticador
-        ServicioAutenticacionImpl objetoAutenticador = new ServicioAutenticacionImpl();
-        Naming.rebind(ConstantesRMI.DIRECCION_AUTENTICADOR, objetoAutenticador);
+        ServicioAutenticacionImpl servicioAutenticacion = new ServicioAutenticacionImpl();
+        Naming.rebind(ConstantesRMI.DIRECCION_AUTENTICADOR, servicioAutenticacion);
         System.out.println("Servicio Autenticador preparado con exito");
+
+        //Levantamos servicio gestor
+        ServicioGestorImpl servicioGestor = new ServicioGestorImpl();
+        Naming.rebind(ConstantesRMI.DIRECCION_GESTOR, servicioGestor);
+        System.out.println("Servicio gestor preparado con exito");
 
     }
 

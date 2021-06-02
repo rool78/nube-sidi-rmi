@@ -150,19 +150,18 @@ public class Cliente {
     private void subirFichero() throws MalformedURLException, NotBoundException, RemoteException {
         System.out.println("¡¡OJO!! el fichero debe estar en la carpeta actual");
         String nombreFichero = Gui.entradaTexto("Introduzca el nombre del fichero");
-        File f = new File(nombreFichero);
-        if (!f.exists()) {
+        File file = new File(nombreFichero);
+        if (!file.exists()) {
             System.out.println("El fichero no existe");
             return;
         } else {
             //Solicitamos la URL del ServicioClOperador
             ServicioGestorInterface servicioGestor = (ServicioGestorInterface) Naming.lookup(ConstantesRMI.DIRECCION_GESTOR);
 
-
             //TODO obtener url repositorio y realizar una subida
             //Solicitamos la subida del fichero al gestor, nos va a devolver el Id del repositorio asociado al cliente
             String url = servicioGestor.subirFichero(idSesion);
-            Fichero fichero = new Fichero(nombreFichero, this.nombre);
+            Fichero fichero = new Fichero(nombreFichero, String.valueOf(this.idSesion));
 
             //Tenemos que buscar el servicio ClOperador
             ServicioClOperadorInterface servicioClOperador = (ServicioClOperadorInterface) Naming.lookup(url);
@@ -173,7 +172,7 @@ public class Cliente {
                 System.out.println("Error en la subida del fichero");
                 return;
             }
-            System.out.println("El fichero se ha subido correctametne");
+            System.out.println("El fichero se ha subido correctamente");
 
 
 

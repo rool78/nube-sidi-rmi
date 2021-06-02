@@ -77,12 +77,11 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
         //Añadimos el nuevo usuario al repo asignado
         repositoriosEnLinea.get(asignacionAleatoria).getUsuarios().add(nuevoUsuario);
 
-        System.out.println("Usuario registrado con exito");
+        System.out.println("Servidor: Usuario registrado con exito");
 
         //Creamos carpeta
         ServicioSrOperadorInterface servidorSrOperador = (ServicioSrOperadorInterface) Naming.lookup(ConstantesRMI.DIRECCION_SR_OPERADOR);
         int respuesta = servidorSrOperador.crearCarpeta(nuevoUsuario.getId());
-
         if (respuesta == Respuesta.ERROR_AL_CREAR_CARPETA.getCodigo()) {
             return respuesta;
         }
@@ -97,6 +96,7 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
     public String obtenerIdRepositorioDeCliente(int clienteId) {
         for (Usuario u: clientesEnLinea) {
             if (u.getId() == clienteId) {
+                System.out.println("Url repo cliente: " + ConstantesRMI.DIRECCION_CL_OPERADOR + "/" + u.getRepositorio().getId());
                 return  ConstantesRMI.DIRECCION_CL_OPERADOR + "/" + u.getRepositorio().getId();
             }
         }

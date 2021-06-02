@@ -20,7 +20,7 @@ public class RepositorioMain {
     }
 
     public RepositorioMain() throws MalformedURLException, RemoteException {
-        //levantarServicios();
+        levantarServicios();
     }
 
     public void launch() {
