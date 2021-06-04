@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 
 public interface ServicioClOperadorInterface extends Remote {
 
-    int subirFichero(Fichero fichero) throws RemoteException;
+    int subirFichero(Fichero fichero, int idCliente) throws RemoteException;
 
     int borrarFichero(String fichero, String carpeta) throws RemoteException;
 

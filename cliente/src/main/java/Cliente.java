@@ -135,8 +135,9 @@ public class Cliente {
 
     }
 
-    private void listarFicheros() {
-
+    private void listarFicheros() throws MalformedURLException, NotBoundException, RemoteException {
+        ServicioGestorInterface servicioGestor = (ServicioGestorInterface) Naming.lookup(ConstantesRMI.DIRECCION_GESTOR);
+        System.out.println(servicioGestor.listarFicherosCliente(idSesion));
     }
 
     private void borrarFichero() {
@@ -148,53 +149,29 @@ public class Cliente {
     }
 
     private void subirFichero() throws MalformedURLException, NotBoundException, RemoteException {
-        System.out.println("¡¡OJO!! el fichero debe estar en la carpeta actual");
         String nombreFichero = Gui.entradaTexto("Introduzca el nombre del fichero");
         File file = new File(nombreFichero);
         if (!file.exists()) {
             System.out.println("El fichero no existe");
             return;
-        } else {
-            //Solicitamos la URL del ServicioClOperador
-            ServicioGestorInterface servicioGestor = (ServicioGestorInterface) Naming.lookup(ConstantesRMI.DIRECCION_GESTOR);
-
-            //TODO obtener url repositorio y realizar una subida
-            //Solicitamos la subida del fichero al gestor, nos va a devolver el Id del repositorio asociado al cliente
-            String url = servicioGestor.subirFichero(idSesion);
-            Fichero fichero = new Fichero(nombreFichero, String.valueOf(this.idSesion));
-
-            //Tenemos que buscar el servicio ClOperador
-            ServicioClOperadorInterface servicioClOperador = (ServicioClOperadorInterface) Naming.lookup(url);
-
-            int respuestaCl = servicioClOperador.subirFichero(fichero);
-
-            if (respuestaCl != Respuesta.OK.getCodigo()) {
-                System.out.println("Error en la subida del fichero");
-                return;
-            }
-            System.out.println("El fichero se ha subido correctamente");
-
-
-
-
-            //extraemos la carpeta donde se va a guardar el fichero, que sera el id, del cliente
-            //que sera al mismo tiempo el propietario del Fichero, segundo parametro
-
-//            String URLservicioClOperador = datosURL.getUrl();
-//            String propietario = ""+datosURL.getIdCliente();
-
-            //HAY QUE COMPROBAR SI EXISTE EL FICHERO en la carpeta actual
-//            Fichero fichero= new Fichero(nombreFichero,propietario);
-//            ServicioClOperadorInterface servicioClOperador =(ServicioClOperadorInterface)Naming.lookup(URLservicioClOperador);
-
-//            if (servicioClOperador.subirFichero(fichero)==false)
-//            {
-//                System.out.println("Error en el envío (Checksum failed), intenta de nuevo");
-//            }
-//            else{
-//                System.out.println("Fichero: " + nombreFichero + " enviado");
-//            }
         }
+        //Solicitamos la URL del ServicioClOperador
+        ServicioGestorInterface servicioGestor = (ServicioGestorInterface) Naming.lookup(ConstantesRMI.DIRECCION_GESTOR);
+
+        //Solicitamos la subida del fichero al gestor, nos va a devolver el Id del repositorio asociado al cliente
+        String url = servicioGestor.subirFichero(idSesion);
+        Fichero fichero = new Fichero(nombreFichero, String.valueOf(this.idSesion));
+
+        //Tenemos que buscar el servicio ClOperador
+        ServicioClOperadorInterface servicioClOperador = (ServicioClOperadorInterface) Naming.lookup(url);
+
+        int respuestaCl = servicioClOperador.subirFichero(fichero, idSesion);
+
+        if (respuestaCl != Respuesta.OK.getCodigo()) {
+            System.out.println("Error en la subida del fichero");
+            return;
+        }
+        System.out.println("El fichero se ha subido correctamente");
     }
 
     public static void arrancarRegistro(int numPuertoRMI) throws RemoteException {

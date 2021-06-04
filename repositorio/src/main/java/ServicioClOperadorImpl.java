@@ -1,12 +1,15 @@
-import com.sun.istack.internal.Nullable;
+import commons.ConstantesRMI;
 import commons.Fichero;
+import commons.Metadatos;
 import commons.Respuesta;
 import commons.interfaces.repositorio.ServicioClOperadorInterface;
+import commons.interfaces.servidor.ServicioGestorInterface;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -17,9 +20,8 @@ public class ServicioClOperadorImpl extends UnicastRemoteObject implements Servi
     }
 
     @Override
-    public int subirFichero(Fichero fichero) throws RemoteException {
-        @Nullable OutputStream flujoSalida = null;
-
+    public int subirFichero(Fichero fichero, int idCliente) throws RemoteException {
+        OutputStream outputStream = null;
         try {
             File directorioDestino = new File(fichero.obtenerPropietario());
 
@@ -29,32 +31,32 @@ public class ServicioClOperadorImpl extends UnicastRemoteObject implements Servi
                 return Respuesta.ERROR.getCodigo();
             }
 
-            final File rutaDestino = new File(
-                    fichero.obtenerPropietario(),
-                    fichero.obtenerNombre());
+            File rutaDestino = new File(fichero.obtenerPropietario(), fichero.obtenerNombre());
 
-            if (rutaDestino.exists()) {
-                System.out.println("Fichero ya existe para cliente, sera sobreescrito");
-            }
+            outputStream = new FileOutputStream(rutaDestino);
 
-            flujoSalida = new FileOutputStream(rutaDestino);
-
-            if (!fichero.escribirEn(flujoSalida)) {
+            if (!fichero.escribirEn(outputStream)) {
                 System.out.println("Error al escribir fichero");
                 return Respuesta.ERROR.getCodigo();
             }
+            //todo llmar al gestor para avisar de que el cliente ha subido un fichero, guardar informacion para poder listar sus ficheros
+            ServicioGestorInterface servicioGestor = (ServicioGestorInterface) Naming.lookup(ConstantesRMI.DIRECCION_GESTOR);
+            servicioGestor.ficheroSubido(Metadatos.of(fichero, idCliente));
+
+
             System.out.println("Fichero subido correctamente");
             return Respuesta.OK.getCodigo();
 
-        } catch (final Exception e) {
-
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Exception: " + e.getMessage());
         } finally {
             try {
-                if (flujoSalida != null) {
-                    flujoSalida.close();
+                if (outputStream != null) {
+                    outputStream.close();
                 }
-            } catch (final IOException e) {
-                // Nada que podamos hacer aquí
+            } catch (IOException ignored) {
+
             }
         }
         return Respuesta.ERROR.getCodigo();

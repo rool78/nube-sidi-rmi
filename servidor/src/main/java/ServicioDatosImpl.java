@@ -1,17 +1,17 @@
 import commons.ConstantesRMI;
-import commons.modelo.Repositorio;
+import commons.Metadatos;
 import commons.Respuesta;
-import commons.modelo.Usuario;
 import commons.interfaces.repositorio.ServicioSrOperadorInterface;
 import commons.interfaces.servidor.ServicioDatosInterface;
+import commons.modelo.Repositorio;
+import commons.modelo.Usuario;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDatosInterface {
 
@@ -22,7 +22,7 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
     private List<Repositorio> repositoriosEnLinea = new ArrayList<>();
 
 //    private Map<Repositorio, List<Usuario>> clientesEnRepositorios = new HashMap<>();
-//    private Map<Usuario, List<Metadatos>> clientFiles = new HashMap<>();
+    private Map<Integer, List<Metadatos>> ficherosCliente = new HashMap<>();
 
     private int idUsuarios = 0;
     private int idRepositorios = 0;
@@ -101,6 +101,44 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
             }
         }
         return "";
+    }
+
+    @Override
+    public String listarFicherosCliente(int idCliente) throws RemoteException {
+        List<Metadatos> ficheros = this.ficherosCliente.get(idCliente);
+        StringBuilder stringBuilder = new StringBuilder("Lista ficheros: ");
+        for (Metadatos m: ficheros) {
+            stringBuilder.append(" [")
+                         .append(m.getNombreFichero())
+                         .append("] ");
+        }
+        return stringBuilder.toString();
+    }
+
+    @Override
+    public int ficheroSubido(Metadatos ficheroSubido) throws RemoteException {
+        if (this.ficherosCliente.containsKey(ficheroSubido.getIdCliente())) {
+            this.ficherosCliente.get(ficheroSubido.getIdCliente()).add(ficheroSubido);
+        } else {
+            List<Metadatos> list = new ArrayList<Metadatos>();
+            list.add(ficheroSubido);
+            this.ficherosCliente.put(ficheroSubido.getIdCliente(), list);
+        }
+        return Respuesta.OK.getCodigo();
+    }
+
+    @Override
+    public int fihceroBorrado(Metadatos ficheroBorrado) throws RemoteException {
+        List<Metadatos> ficheros = this.ficherosCliente.get(ficheroBorrado.getIdCliente());
+        Iterator<Metadatos> it = ficheros.iterator();
+        while (it.hasNext()) {
+            Metadatos m = it.next();
+            if (m.getNombreFichero().equals(ficheroBorrado.getNombreFichero())) {
+                it.remove();
+                break;
+            }
+        }
+        return 0;
     }
 
     @Override
