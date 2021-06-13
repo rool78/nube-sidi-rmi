@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Repositorio {
+public class Repo {
 
     private String nombre;
     private int id;
     private List<Usuario> usuarios;
 
-    public Repositorio(String nombre, int id) {
+    public Repo(String nombre, int id) {
         this.nombre = nombre;
         this.id = id;
         this.usuarios = new ArrayList<>();
@@ -28,15 +28,11 @@ public class Repositorio {
         return usuarios;
     }
 
-    public void setUsuarios(List<Usuario> usuarios) {
-        this.usuarios = usuarios;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Repositorio that = (Repositorio) o;
+        Repo that = (Repo) o;
         return nombre.equals(that.nombre);
     }
 

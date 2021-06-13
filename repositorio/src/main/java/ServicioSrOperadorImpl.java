@@ -18,29 +18,25 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
 
     @Override
     public int crearCarpeta(int idCliente) throws RemoteException {
-        System.out.println("##Crear carpeta idCliente: " + idCliente);
-        File carpeta = new File("" + idCliente);
-        System.out.println("Carpeta: " + carpeta.getAbsolutePath());
+        File carpeta = new File(String.valueOf(idCliente));
         if (!carpeta.mkdir()) {
-            System.out.println("Carpeta creada correctamente");
             return Respuesta.OK.getCodigo();
         }
-        System.out.println("Error al crear la carpeta");
         return Respuesta.ERROR_AL_CREAR_CARPETA.getCodigo();
     }
 
     @Override
     public int bajarFichero(String URLdiscoCliente, String nombreFichero, int idCliente) throws MalformedURLException, RemoteException, NotBoundException {
-        Fichero fichero = new Fichero("" + idCliente, nombreFichero, "" + idCliente);
+        Fichero fichero = new Fichero(String.valueOf(idCliente), nombreFichero, String.valueOf(idCliente));
         ServicioDiscoClienteInterface servicioDiscoCliente = (ServicioDiscoClienteInterface) Naming.lookup(URLdiscoCliente);
 
-        int respuesta = servicioDiscoCliente.bajarFichero(fichero, idCliente);
+        int respuesta = servicioDiscoCliente.bajarFichero(fichero);
 
         if (respuesta == Respuesta.OK.getCodigo()) {
             System.out.println("Fichero: " + nombreFichero + " enviado");
-        } else {
-            System.out.println("Error en el envío (Checksum failed), intenta de nuevo");
+            return Respuesta.OK.getCodigo();
         }
-        return 0;
+        System.out.println("Error en el envío");
+        return Respuesta.ERROR.getCodigo();
     }
 }

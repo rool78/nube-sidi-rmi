@@ -14,42 +14,36 @@ public class ServicioAutenticacionImpl extends UnicastRemoteObject implements Se
 
     protected ServicioAutenticacionImpl() throws RemoteException, MalformedURLException, NotBoundException {
         super();
-        servicioDatos = (ServicioDatosInterface) Naming.lookup(ConstantesRMI.DIRECCION_DATOS);
+        this.servicioDatos = (ServicioDatosInterface) Naming.lookup(ConstantesRMI.DIRECCION_DATOS);
     }
 
     @Override
     public int autenticarCliente(String nombre, String password) throws RemoteException {
-        System.out.println("##autenticarCliente");
-        return servicioDatos.autenticarCliente(nombre, password);
+        return this.servicioDatos.autenticarCliente(nombre, password);
     }
 
     @Override
     public int registrarCliente(String nombre, String password) throws RemoteException, MalformedURLException, NotBoundException {
-        System.out.println("##registrarCliente");
-        return servicioDatos.registrarCliente(nombre, password);
+        return this.servicioDatos.registrarCliente(nombre, password);
     }
 
     @Override
     public int autenticarRepositorio(String nombre) throws RemoteException {
-        return servicioDatos.autenticarRepositorio(nombre);
+        return this.servicioDatos.autenticarRepositorio(nombre);
     }
 
     @Override
     public int registrarRepositorio(String nombre) throws RemoteException {
-        return servicioDatos.registrarRepositorio(nombre);
+        return this.servicioDatos.registrarRepositorio(nombre);
     }
 
     @Override
     public void desconectarCliente(String nombre) throws RemoteException {
-        servicioDatos.desconectarCliente(nombre);
-//        for (Usuario u: clien
-//             ) {
-//
-//        }
+        this.servicioDatos.desconectarCliente(nombre);
     }
 
     @Override
     public void desconectarRepositorio(String nombre) throws RemoteException {
-        servicioDatos.desconectarRepositorio(nombre);
+        this.servicioDatos.desconectarRepositorio(nombre);
     }
 }

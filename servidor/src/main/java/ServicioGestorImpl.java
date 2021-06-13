@@ -1,5 +1,7 @@
 import commons.ConstantesRMI;
 import commons.Metadatos;
+import commons.Respuesta;
+import commons.interfaces.repositorio.ServicioSrOperadorInterface;
 import commons.interfaces.servidor.ServicioDatosInterface;
 import commons.interfaces.servidor.ServicioGestorInterface;
 
@@ -20,14 +22,18 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 
     @Override
     public String subirFichero(int idSesionCliente) throws RemoteException, MalformedURLException, NotBoundException {
-        System.out.println("##Servicio gestor: subirFichero");
-        return this.servicioDatos.obtenerIdRepositorioDeCliente(idSesionCliente);
+        return this.servicioDatos.obtenerUrlRepositorioDeCliente(idSesionCliente);
     }
 
     @Override
-    public String bajarFichero(String URLdiscoCliente, int idFichero, int idSesionCliente) throws RemoteException, MalformedURLException, NotBoundException {
-        return null;
+    public int bajarFichero(String urldiscoCliente, String nombreFichero, int idCliente) throws RemoteException, MalformedURLException, NotBoundException {
+        String urlRepo = this.servicioDatos.obtenerUrlRepositorio(idCliente);
+        ServicioSrOperadorInterface servicioSrOperador = (ServicioSrOperadorInterface) Naming.lookup(urlRepo);
+        servicioSrOperador.bajarFichero(urldiscoCliente, nombreFichero, idCliente);
+        return Respuesta.OK.getCodigo();
     }
+
+
 
     @Override
     public String listarFicherosCliente(int idSesionCliente) throws RemoteException, MalformedURLException, NotBoundException {
@@ -40,8 +46,13 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
     }
 
     @Override
-    public String borrarFichero(int idFichero, int idSesionCliente) throws MalformedURLException, RemoteException, NotBoundException {
-        return null;
+    public String listarClientesRepositorio(int id) throws RemoteException {
+        return this.servicioDatos.listarClientesRepositorio(id);
+    }
+
+    @Override
+    public String borrarFichero(int idSesionCliente) throws MalformedURLException, RemoteException, NotBoundException {
+        return this.servicioDatos.obtenerUrlRepositorioDeCliente(idSesionCliente);
     }
 
     @Override
@@ -51,7 +62,7 @@ public class ServicioGestorImpl extends UnicastRemoteObject implements ServicioG
 
     @Override
     public int ficheroBorrado(Metadatos ficheroBorrado) throws RemoteException {
-        return  this.servicioDatos.fihceroBorrado(ficheroBorrado);
+        return  this.servicioDatos.ficheroBorrado(ficheroBorrado);
     }
 }
 

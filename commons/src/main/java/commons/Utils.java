@@ -8,15 +8,8 @@ public class Utils {
     public static final String CODEBASE = "java.rmi.server.codebase";
 
     public static void setCodeBase(Class<?> c) {
-        //Calculara la ruta donde este cargada la clase
-        //A la clase donde esta el codigo fuente, dame la ubicacion y pasala a string
         String ruta = c.getProtectionDomain().getCodeSource().getLocation().toString();
-
-        //si seteamos el codebase en otra ubicacion, antes de setearlo, mejor
-        //comprobar si ya esta puesta, asi evitamos problemas si pedimos mas veces el codebase
-        //esto es para no tener que lanzar desde el shell
-        String path = System.getProperty(CODEBASE); //si se seteo contrendra ya algo
-
+        String path = System.getProperty(CODEBASE);
         if (path != null && !path.isEmpty()) {
             ruta = path + " " + ruta;
         }

@@ -17,10 +17,11 @@ public class Cliente {
     private String nombre;
     private int idSesion;
 
-    private ServicioAutenticacionInterface servicioAutenticacion = null;
+    private ServicioAutenticacionInterface servicioAutenticacion;
+    private ServicioGestorInterface servicioGestor;
 
     public Cliente() throws MalformedURLException, RemoteException {
-        levantarServicios();
+//        levantarServicios();
     }
 
     public static void main(String[] args) throws RemoteException, MalformedURLException, NotBoundException {
@@ -32,17 +33,22 @@ public class Cliente {
         Utils.arrancarRegistro(ConstantesRMI.PUERTO_CLIENTE);
         Utils.setCodeBase(ServicioDiscoClienteInterface.class);
         ServicioDiscoClienteImpl servicioDiscoCliente = new ServicioDiscoClienteImpl();
-        Naming.rebind(ConstantesRMI.DIRECCION_DISCO_CLIENTE, servicioDiscoCliente);
+        Naming.rebind(ConstantesRMI.DIRECCION_DISCO_CLIENTE + this.idSesion, servicioDiscoCliente);
+        System.out.println("Servicio cliente lavantado con exito: " + ConstantesRMI.DIRECCION_DISCO_CLIENTE + this.idSesion);
     }
 
     private void launch() throws MalformedURLException, NotBoundException, RemoteException {
+        try {
+            this.servicioAutenticacion = (ServicioAutenticacionInterface) Naming.lookup(ConstantesRMI.DIRECCION_AUTENTICADOR);
+            this.servicioGestor = (ServicioGestorInterface) Naming.lookup(ConstantesRMI.DIRECCION_GESTOR);
+
+        } catch (MalformedURLException | RemoteException | NotBoundException e) {
+            System.out.println("Error encontrando servicios");
+        }
         int opcion = 0;
-//        servicioAutenticacion = (ServicioAutenticacionInterface) Naming.lookup(ConstantesRMI.DIRECCION_AUTENTICADOR);
-        //todo borrar, registro un cliente
-//        servicioAutenticacion.registrarCliente("rol", "1234");
         do {
             opcion = Gui.menu("Acceso de Cliente", new String[]
-                    {"Registrar un nuevo usuario", "Autenticarse en el sistema(hacer login)"});
+                    {"Registrar un nuevo usuario", "Autenticarse en el sistema"});
             switch (opcion) {
                 case 1:
                     registrarUsuario();
@@ -55,19 +61,13 @@ public class Cliente {
     }
 
     private void registrarUsuario() throws MalformedURLException, NotBoundException, RemoteException {
-        try {
-            servicioAutenticacion = (ServicioAutenticacionInterface) Naming.lookup(ConstantesRMI.DIRECCION_AUTENTICADOR);
-        } catch (MalformedURLException | RemoteException | NotBoundException e) {
-            System.out.println("Error en lookup servicioAutenticacion");
-        }
         System.out.println("Menu registro nuevo usuario.");
-        String nombre = Gui.entradaTexto("Introduce el nuevo nombre de ususario:");
-        String password = Gui.entradaTexto("Introduce una contraseña:");
+        String nombre = Gui.entradaTexto("Introduce el nuevo nombre de ususario");
+        String password = Gui.entradaTexto("Introduce una contraseña");
 
-        int respuesta = servicioAutenticacion.registrarCliente(nombre, password);
+        int respuesta = this.servicioAutenticacion.registrarCliente(nombre, password);
 
         if (respuesta >= Respuesta.OK.getCodigo()) {
-            //si la respuesta es correcta nos devuelven la id del usuario
             System.out.println("Usuario registrado correctamente");
             this.idSesion = respuesta;
             this.nombre = nombre;
@@ -76,31 +76,23 @@ public class Cliente {
     }
 
     private void desconectar() throws RemoteException {
-        servicioAutenticacion.desconectarCliente(nombre);
+        this.servicioAutenticacion.desconectarCliente(nombre);
     }
 
     private void autenticarUsuario() throws RemoteException, MalformedURLException, NotBoundException {
-        try {
-            servicioAutenticacion = (ServicioAutenticacionInterface) Naming.lookup(ConstantesRMI.DIRECCION_AUTENTICADOR);
-        } catch (MalformedURLException | RemoteException | NotBoundException e) {
-            System.out.println("Error en lookup servicioAutenticacion");
-        }
-        if (servicioAutenticacion != null) {
-            System.out.println("Menu autenticacion usuario");
-            String nombre = Gui.entradaTexto("Introduce tu nombre de usuario:");
-            System.out.println("Introduce tu contraseña:");
-            String password = Gui.entradaTexto("Introduce tu contraseña:");
+        System.out.println("Menu autenticacion usuario");
+        String nombre = Gui.entradaTexto("Introduce tu nombre de usuario");
+        String password = Gui.entradaTexto("Introduce tu contraseña");
 
-            int respuesta = servicioAutenticacion.autenticarCliente(nombre, password);
-            if (respuesta == Respuesta.OK.getCodigo()) {
-                System.out.println("Usuario autenticado satisfactoriamente");
-                this.nombre = nombre;
-                menuCliente();
-            } else {
-                System.out.println("Usuario o contareña incorrectos");
-            }
+        int respuesta = this.servicioAutenticacion.autenticarCliente(nombre, password);
+        if (respuesta >= Respuesta.OK.getCodigo()) {
+            levantarServicios();
+            System.out.println("Usuario autenticado satisfactoriamente");
+            this.nombre = nombre;
+            menuCliente();
+        } else {
+            System.out.println("Usuario o contareña incorrectos");
         }
-
     }
 
     private void menuCliente() throws RemoteException, MalformedURLException, NotBoundException {
@@ -127,25 +119,60 @@ public class Cliente {
                     break;
             }
         } while (opcion != 6);
-
         desconectar();
     }
 
-    private void listarClientes() {
+    private void listarClientes() throws MalformedURLException, NotBoundException, RemoteException {
+        System.out.println(this.servicioGestor.listarClientes());
+    }
 
+    private String obtenerFicherosDisponibles() throws MalformedURLException, NotBoundException, RemoteException {
+        return this.servicioGestor.listarFicherosCliente(idSesion);
     }
 
     private void listarFicheros() throws MalformedURLException, NotBoundException, RemoteException {
-        ServicioGestorInterface servicioGestor = (ServicioGestorInterface) Naming.lookup(ConstantesRMI.DIRECCION_GESTOR);
-        System.out.println(servicioGestor.listarFicherosCliente(idSesion));
+        String listaFicheros = obtenerFicherosDisponibles();
+        if (listaFicheros.isEmpty()) {
+            System.out.println("Todavía no hay ficheros");
+        } else {
+            System.out.println(obtenerFicherosDisponibles());
+        }
     }
 
-    private void borrarFichero() {
+    private void borrarFichero() throws MalformedURLException, NotBoundException, RemoteException {
+        String ficheros = obtenerFicherosDisponibles();
+        if (ficheros.isEmpty()) {
+            System.out.println("No hay ficheros disponibles");
+            return;
+        }
+        System.out.println(ficheros);
+
+        String nombreFichero = Gui.entradaTexto("Introduzca el nombre del fichero que deseas borrar");
+        String urlRepositorio = this.servicioGestor.borrarFichero(this.idSesion);
+
+        ServicioClOperadorInterface servicioClOperador = (ServicioClOperadorInterface) Naming.lookup(urlRepositorio);
+
+        int respuesta = servicioClOperador.borrarFichero(this.idSesion, nombreFichero);
+
+        if (respuesta == Respuesta.OK.getCodigo()) {
+            System.out.println("El fihcero se ha borrado correctamente");
+        } else {
+            System.out.println("A ocurrido un problema borrando el fichero");
+        }
 
     }
 
-    private void bajarFichero() {
+    private void bajarFichero() throws MalformedURLException, NotBoundException, RemoteException {
+        String ficheros = obtenerFicherosDisponibles();
+        if (ficheros.isEmpty()) {
+            System.out.println("No hay ficheros disponibles");
+            return;
+        }
 
+        System.out.println(ficheros);
+        String nombreFichero = Gui.entradaTexto("Introduzca el nombre del fichero que deseas descargar");
+        int respuesta = this.servicioGestor.bajarFichero(ConstantesRMI.DIRECCION_DISCO_CLIENTE + this.idSesion
+                , nombreFichero, this.idSesion);
     }
 
     private void subirFichero() throws MalformedURLException, NotBoundException, RemoteException {
@@ -155,16 +182,9 @@ public class Cliente {
             System.out.println("El fichero no existe");
             return;
         }
-        //Solicitamos la URL del ServicioClOperador
-        ServicioGestorInterface servicioGestor = (ServicioGestorInterface) Naming.lookup(ConstantesRMI.DIRECCION_GESTOR);
-
-        //Solicitamos la subida del fichero al gestor, nos va a devolver el Id del repositorio asociado al cliente
-        String url = servicioGestor.subirFichero(idSesion);
+        String url = this.servicioGestor.subirFichero(idSesion);
         Fichero fichero = new Fichero(nombreFichero, String.valueOf(this.idSesion));
-
-        //Tenemos que buscar el servicio ClOperador
         ServicioClOperadorInterface servicioClOperador = (ServicioClOperadorInterface) Naming.lookup(url);
-
         int respuestaCl = servicioClOperador.subirFichero(fichero, idSesion);
 
         if (respuestaCl != Respuesta.OK.getCodigo()) {

@@ -3,7 +3,7 @@ import commons.Metadatos;
 import commons.Respuesta;
 import commons.interfaces.repositorio.ServicioSrOperadorInterface;
 import commons.interfaces.servidor.ServicioDatosInterface;
-import commons.modelo.Repositorio;
+import commons.modelo.Repo;
 import commons.modelo.Usuario;
 
 import java.net.MalformedURLException;
@@ -18,10 +18,9 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
     private List<Usuario> clientesRegistrados = new ArrayList<>();
     private List<Usuario> clientesEnLinea = new ArrayList<>();
 
-    private List<Repositorio> repositoriosRegistrados = new ArrayList<>();
-    private List<Repositorio> repositoriosEnLinea = new ArrayList<>();
+    private List<Repo> repositoriosRegistrados = new ArrayList<>();
+    private List<Repo> repositoriosEnLinea = new ArrayList<>();
 
-//    private Map<Repositorio, List<Usuario>> clientesEnRepositorios = new HashMap<>();
     private Map<Integer, List<Metadatos>> ficherosCliente = new HashMap<>();
 
     private int idUsuarios = 0;
@@ -35,11 +34,9 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
     public int autenticarCliente(String nombre, String password) throws RemoteException {
         for (Usuario u : clientesRegistrados) {
             if (u.getNombre().equals(nombre) && u.getPassword().equals(password)) {
-                //Tenemos que ver si su repo esta online =)
-                for (Repositorio r : repositoriosEnLinea) {
+                for (Repo r : repositoriosEnLinea) {
                     if (r.equals(u.getRepositorio())) {
-                        //repo en linea
-                        System.out.println("Login correcto");
+                        System.out.println("Autenticación correcta");
                         return u.getId();
                     }
                 }
@@ -50,22 +47,17 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
 
     @Override
     public int registrarCliente(String nombre, String password) throws RemoteException, MalformedURLException, NotBoundException {
-        System.out.println("Registrar cliente datos");
         for (Usuario u : clientesRegistrados) {
             if (u.getNombre().equals(nombre)) {
                 System.out.println("Ya existe un Usuario con ese nombre");
                 return Respuesta.NOMBRE_YA_EN_USO.getCodigo();
             }
         }
-
         if (repositoriosEnLinea.isEmpty()) {
             System.out.println("No hay repositorios en linea");
             return Respuesta.NO_HAY_REPOSITORIOS_EN_LINEA.getCodigo();
         }
-
         int asignacionAleatoria = (int) (Math.random() * repositoriosEnLinea.size());
-        System.out.println("Repos en linea asignacion: " + asignacionAleatoria);
-
         Usuario nuevoUsuario = new Usuario(nombre, password, generarIdUsuario());
 
         //Añadimos el repo al usuario
@@ -77,8 +69,6 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
         //Añadimos el nuevo usuario al repo asignado
         repositoriosEnLinea.get(asignacionAleatoria).getUsuarios().add(nuevoUsuario);
 
-        System.out.println("Servidor: Usuario registrado con exito");
-
         //Creamos carpeta
         ServicioSrOperadorInterface servidorSrOperador = (ServicioSrOperadorInterface) Naming.lookup(ConstantesRMI.DIRECCION_SR_OPERADOR);
         int respuesta = servidorSrOperador.crearCarpeta(nuevoUsuario.getId());
@@ -89,14 +79,48 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
     }
 
     public String listarClientes() {
-        return clientesRegistrados.toString();
+        if (this.clientesRegistrados.isEmpty()) {
+            return "No hay ningun cliente";
+        }
+        StringBuilder stringBuilder = new StringBuilder("Lista clientes registrados: ");
+        for (Usuario u: this.clientesRegistrados) {
+            stringBuilder.append(" [")
+                    .append(u.getNombre())
+                    .append("] ");
+        }
+        return stringBuilder.toString();
     }
 
     @Override
-    public String obtenerIdRepositorioDeCliente(int clienteId) {
+    public String listarClientesRepositorio(int id) throws RemoteException {
+        for (Repo r : this.repositoriosEnLinea) {
+            if (r.getId() == id) {
+                return listarClientesRepositorio(r);
+            }
+        }
+        return "";
+    }
+
+    private String listarClientesRepositorio(Repo repositorio) {
+        if (repositorio.getUsuarios().isEmpty()) {
+            return "";
+        }
+        StringBuilder stringBuilder = new StringBuilder("Lista clientes en repositorio: ");
+        for (Usuario u: repositorio.getUsuarios()) {
+            stringBuilder.append(" [")
+                    .append("id: ")
+                    .append(u.getId())
+                    .append(" Nombre: ")
+                    .append(u.getNombre())
+                    .append("] ");
+        }
+        return stringBuilder.toString();
+    }
+
+    @Override
+    public String obtenerUrlRepositorioDeCliente(int clienteId) {
         for (Usuario u: clientesEnLinea) {
             if (u.getId() == clienteId) {
-                System.out.println("Url repo cliente: " + ConstantesRMI.DIRECCION_CL_OPERADOR + "/" + u.getRepositorio().getId());
                 return  ConstantesRMI.DIRECCION_CL_OPERADOR + "/" + u.getRepositorio().getId();
             }
         }
@@ -104,7 +128,22 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
     }
 
     @Override
+    public String obtenerUrlRepositorio(int clienteId) throws RemoteException {
+        for (Repo r: this.repositoriosEnLinea) {
+            for (Usuario u: r.getUsuarios()) {
+                if (u.getId() == clienteId) {
+                    return ConstantesRMI.DIRECCION_SR_OPERADOR + "/" + r.getId();
+                }
+            }
+        }
+        return "";
+    }
+
+    @Override
     public String listarFicherosCliente(int idCliente) throws RemoteException {
+        if (this.ficherosCliente.isEmpty() || this.ficherosCliente.get(idCliente) == null) {
+            return "";
+        }
         List<Metadatos> ficheros = this.ficherosCliente.get(idCliente);
         StringBuilder stringBuilder = new StringBuilder("Lista ficheros: ");
         for (Metadatos m: ficheros) {
@@ -128,7 +167,7 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
     }
 
     @Override
-    public int fihceroBorrado(Metadatos ficheroBorrado) throws RemoteException {
+    public int ficheroBorrado(Metadatos ficheroBorrado) throws RemoteException {
         List<Metadatos> ficheros = this.ficherosCliente.get(ficheroBorrado.getIdCliente());
         Iterator<Metadatos> it = ficheros.iterator();
         while (it.hasNext()) {
@@ -143,9 +182,9 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
 
     @Override
     public int autenticarRepositorio(String nombre) throws RemoteException {
-        Repositorio repositorioParaAutenticar = null;
+        Repo repositorioParaAutenticar = null;
         boolean repositorioRegistrado = false;
-        for (Repositorio r: repositoriosRegistrados) {
+        for (Repo r: repositoriosRegistrados) {
             if (r.getNombre().equals(nombre)) {
                 repositorioParaAutenticar = r;
                 repositorioRegistrado = true;
@@ -155,7 +194,7 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
             System.out.println("El repositorio no esta registrado");
             return Respuesta.ERROR_AUTENTICACION.getCodigo();
         }
-        for (Repositorio r: repositoriosEnLinea) {
+        for (Repo r: repositoriosEnLinea) {
             if (r.getNombre().equals(repositorioParaAutenticar.getNombre())) {
                 System.out.println("El repositorio ya estaba en linea");
                 return r.getId();
@@ -169,13 +208,13 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
 
     @Override
     public int registrarRepositorio(String nombre) throws RemoteException {
-        for (Repositorio r : repositoriosRegistrados) {
+        for (Repo r : repositoriosRegistrados) {
             if (r.getNombre().equals(nombre)) {
                 System.out.println("Nombre del repositorio ya en uso");
                 return Respuesta.NOMBRE_YA_EN_USO.getCodigo();
             }
         }
-        Repositorio nuevoRepositorio = new Repositorio(nombre, generarIdRepositorio());
+        Repo nuevoRepositorio = new Repo(nombre, generarIdRepositorio());
         repositoriosRegistrados.add(nuevoRepositorio);
         repositoriosEnLinea.add(nuevoRepositorio);
         System.out.println("Repositorio creado correctamente");
@@ -184,24 +223,30 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
 
     @Override
     public void desconectarCliente(String nombre) throws RemoteException {
+        Usuario usuarioDesconectar  = null;
         for (Usuario u : clientesEnLinea) {
             if (u.getNombre().equals(nombre)) {
-                clientesEnLinea.remove(u); //todo funciona bien asi?
-                System.out.println("El usuario se ha desconectado correctamnente");
+                usuarioDesconectar = u;
             }
         }
-        System.out.println("No se ha encontrado un usuario para poder desconectarlo");
+        if (usuarioDesconectar != null) {
+            clientesEnLinea.remove(usuarioDesconectar);
+            System.out.println("El usuario se ha desconectado correctamnente");
+        }
     }
 
     @Override
     public void desconectarRepositorio(String nombre) throws RemoteException {
-        for (Repositorio r : repositoriosEnLinea) {
+        Repo repositorioDesconectar = null;
+        for (Repo r : repositoriosEnLinea) {
             if (r.getNombre().equals(nombre)) {
-                repositoriosEnLinea.remove(r);
-                System.out.println("Repositorio desconectado correctamente");
+                repositorioDesconectar = r;
             }
         }
-        System.out.println("No se ha encontrado un repositorio para poder desconectarlo");
+        if (repositorioDesconectar != null) {
+            repositoriosEnLinea.remove(repositorioDesconectar);
+            System.out.println("Repositorio desconectado correctamente");
+        }
     }
 
     private int generarIdUsuario() {

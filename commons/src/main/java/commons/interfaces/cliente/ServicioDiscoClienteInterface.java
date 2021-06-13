@@ -7,6 +7,6 @@ import java.rmi.RemoteException;
 
 public interface ServicioDiscoClienteInterface extends Remote {
 
-    int bajarFichero(Fichero fichero, int idCliente) throws RemoteException;
+    int bajarFichero(Fichero fichero) throws RemoteException;
 
 }

@@ -9,17 +9,22 @@ import java.rmi.RemoteException;
 
 public interface ServicioGestorInterface extends Remote {
 
-    //todo objeto datos?
     public String subirFichero(int idSesionCliente) throws RemoteException, MalformedURLException, NotBoundException;
 
-    public String bajarFichero(String URLdiscoCliente,int idFichero,int idSesionCliente) throws RemoteException, MalformedURLException, NotBoundException;
+    public int bajarFichero(String URLdiscoCliente, String nombreFichero, int idCliente) throws RemoteException, MalformedURLException, NotBoundException;
 
     public String listarFicherosCliente(int idSesionCliente) throws RemoteException, MalformedURLException, NotBoundException;
 
-    public String listarClientes() throws MalformedURLException, RemoteException, NotBoundException;
+    /**
+     * Lista clientes registrados en el sistema
+     * @return
+     * @throws RemoteException
+     */
+    public String listarClientes() throws RemoteException, NotBoundException, MalformedURLException;
 
-    //todo objeto datos?
-    public String borrarFichero(int idFichero,int idSesionCliente) throws MalformedURLException, RemoteException, NotBoundException;
+    public String listarClientesRepositorio(int id) throws RemoteException;
+
+    public String borrarFichero(int idSesionCliente) throws MalformedURLException, RemoteException, NotBoundException;
 
     public int ficheroSubido(Metadatos ficheroSubido) throws RemoteException;
 

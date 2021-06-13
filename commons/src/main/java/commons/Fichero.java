@@ -31,10 +31,10 @@ public class Fichero implements Serializable {
             c.close();
 
         } catch (FileNotFoundException ef) {
-            System.err.println("commons.Fichero no encontrado");
+            System.out.println("commons.Fichero no encontrado");
         } catch (IOException e) {
 
-            System.err.println("Error leyendo fichero" + e.toString());
+            System.out.println("Error leyendo fichero" + e);
         }
         checksum = c.getChecksum().getValue();
 
@@ -59,10 +59,10 @@ public class Fichero implements Serializable {
             c.close();
 
         } catch (FileNotFoundException ef) {
-            System.err.println("commons.Fichero no encontrado");
+            System.out.println("Fichero no encontrado");
         } catch (IOException e) {
 
-            System.err.println("Error leyendo fichero" + e.toString());
+            System.out.println("Error leyendo fichero" + e);
         }
         checksum = c.getChecksum().getValue();
 
@@ -79,7 +79,7 @@ public class Fichero implements Serializable {
                 return (false);    //Falla el checksum, debera mandarse de nuevo
             }
         } catch (Exception e) {
-            System.err.println("Error escribiendo fichero" + e.toString());
+            System.err.println("Error escribiendo fichero" + e);
         }
         return (true); //commons.Fichero mandado Ok
     }

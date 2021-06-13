@@ -7,16 +7,12 @@ public class Usuario {
     private String nombre;
     private String password;
     private int id;
-    private Repositorio repositorio;
+    private Repo repositorio;
 
     public Usuario(String nombre, String password, int id) {
         this.nombre = nombre;
         this.password = password;
         this.id = id;
-    }
-
-    public Usuario(String nombre) {
-        this.nombre = nombre;
     }
 
     public String getNombre() {
@@ -31,11 +27,11 @@ public class Usuario {
         return id;
     }
 
-    public Repositorio getRepositorio() {
+    public Repo getRepositorio() {
         return repositorio;
     }
 
-    public void setRepositorio(Repositorio repositorio) {
+    public void setRepositorio(Repo repositorio) {
         this.repositorio = repositorio;
     }
 
@@ -54,7 +50,7 @@ public class Usuario {
 
     @Override
     public String toString() {
-        return "commons.modelo.Usuario{" +
+        return "Usuario{" +
                 "nombre='" + nombre + '\'' +
                 ", password='" + password + '\'' +
                 ", id=" + id +

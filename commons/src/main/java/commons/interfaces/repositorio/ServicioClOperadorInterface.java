@@ -9,6 +9,6 @@ public interface ServicioClOperadorInterface extends Remote {
 
     int subirFichero(Fichero fichero, int idCliente) throws RemoteException;
 
-    int borrarFichero(String fichero, String carpeta) throws RemoteException;
+    int borrarFichero(int idCliente, String fichero) throws RemoteException;
 
 }
