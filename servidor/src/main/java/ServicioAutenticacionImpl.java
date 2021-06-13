@@ -1,3 +1,8 @@
+/*
+ * Autor: Raúl Maza Sampériz
+ * Email: rmaza14@alumno.uned.es
+ */
+
 import commons.ConstantesRMI;
 import commons.interfaces.servidor.ServicioAutenticacionInterface;
 import commons.interfaces.servidor.ServicioDatosInterface;

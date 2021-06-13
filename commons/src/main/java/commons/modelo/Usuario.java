@@ -1,3 +1,8 @@
+/*
+ * Autor: Raúl Maza Sampériz
+ * Email: rmaza14@alumno.uned.es
+ */
+
 package commons.modelo;
 
 import java.util.Objects;

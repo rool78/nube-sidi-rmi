@@ -1,3 +1,8 @@
+/*
+ * Autor: Raúl Maza Sampériz
+ * Email: rmaza14@alumno.uned.es
+ */
+
 package commons.interfaces.cliente;
 
 import commons.Fichero;

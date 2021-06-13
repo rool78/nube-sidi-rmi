@@ -1,3 +1,8 @@
+/*
+ * Autor: Raúl Maza Sampériz
+ * Email: rmaza14@alumno.uned.es
+ */
+
 import commons.*;
 import commons.interfaces.cliente.ServicioDiscoClienteInterface;
 import commons.interfaces.repositorio.ServicioClOperadorInterface;

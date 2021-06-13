@@ -1,3 +1,8 @@
+/*
+ * Autor: Raúl Maza Sampériz
+ * Email: rmaza14@alumno.uned.es
+ */
+
 package commons;
 
 import java.rmi.RemoteException;
@@ -22,9 +27,9 @@ public class Utils {
             registryServicio = LocateRegistry.getRegistry(numPuertoRMI);
             registryServicio.list();
         } catch (RemoteException e) {
-            System.out.println("El registro RMI no se puede localizar en el puerto " + numPuertoRMI);
+            System.out.println("[INFO] El registro RMI no se puede localizar en el puerto " + numPuertoRMI);
             LocateRegistry.createRegistry(numPuertoRMI);
-            System.out.println("Registro RMI creado en el puerto " + numPuertoRMI);
+            System.out.println("[INFO] Registro RMI creado en el puerto " + numPuertoRMI);
         }
     }
 

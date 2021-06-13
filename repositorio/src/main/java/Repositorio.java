@@ -1,3 +1,8 @@
+/*
+ * Autor: Raúl Maza Sampériz
+ * Email: rmaza14@alumno.uned.es
+ */
+
 import commons.ConstantesRMI;
 import commons.Gui;
 import commons.Respuesta;
@@ -140,11 +145,11 @@ public class Repositorio {
 
         ServicioSrOperadorImpl servicioSrOperador = new ServicioSrOperadorImpl();
         Naming.rebind(ConstantesRMI.DIRECCION_SR_OPERADOR, servicioSrOperador);
-        System.out.println("ServicioSrOperador preparado con exito");
+        System.out.println("[INFO] ServicioSrOperador preparado con exito");
 
         ServicioClOperadorImpl servicioClOperador = new ServicioClOperadorImpl();
         Naming.rebind(ConstantesRMI.DIRECCION_CL_OPERADOR, servicioClOperador);
-        System.out.println("ServicioClOperador preparado con exito");
+        System.out.println("[INFO] ServicioClOperador preparado con exito");
     }
 
 }

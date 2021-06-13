@@ -1,3 +1,8 @@
+/*
+ * Autor: Raúl Maza Sampériz
+ * Email: rmaza14@alumno.uned.es
+ */
+
 package commons.interfaces.servidor;
 
 import commons.Metadatos;
@@ -12,6 +17,10 @@ public interface ServicioDatosInterface extends ServicioAutenticacionInterface {
      * @throws RemoteException
      */
     public String listarClientes() throws RemoteException;
+
+    public String listarRepositorios() throws RemoteException;
+
+    public String listarParejasRepositorioCliente() throws RemoteException;
 
     public String listarClientesRepositorio(int id) throws RemoteException;
 

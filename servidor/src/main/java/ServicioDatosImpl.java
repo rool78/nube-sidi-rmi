@@ -1,3 +1,8 @@
+/*
+ * Autor: Raúl Maza Sampériz
+ * Email: rmaza14@alumno.uned.es
+ */
+
 import commons.ConstantesRMI;
 import commons.Metadatos;
 import commons.Respuesta;
@@ -87,6 +92,43 @@ public class ServicioDatosImpl extends UnicastRemoteObject implements ServicioDa
             stringBuilder.append(" [")
                     .append(u.getNombre())
                     .append("] ");
+        }
+        return stringBuilder.toString();
+    }
+
+    @Override
+    public String listarRepositorios() throws RemoteException {
+        if (this.repositoriosEnLinea.isEmpty()) {
+            return "No hay ningun repositorio";
+        }
+        StringBuilder stringBuilder = new StringBuilder("Lista de repositorios disponibles: ");
+        for (Repo r: this.repositoriosEnLinea) {
+            stringBuilder.append(" [")
+                    .append(r.getNombre())
+                    .append("] ");
+        }
+        return stringBuilder.toString();
+    }
+
+    @Override
+    public String listarParejasRepositorioCliente() throws RemoteException {
+        if (this.repositoriosEnLinea.isEmpty()) {
+            return "No hay ningun repositorio";
+        }
+        StringBuilder stringBuilder = new StringBuilder("Lista de parejas Repositorio-Cliente: ");
+        for (Repo r: this.repositoriosEnLinea) {
+            stringBuilder.append("\nNombre Repositorio: ")
+                    .append(r.getNombre())
+                    .append(" Usuarios asociados: ");
+            if (r.getUsuarios().isEmpty()) {
+                stringBuilder.append("Sin usuarios");
+            } else {
+                for (Usuario u: r.getUsuarios()) {
+                    stringBuilder.append(" [")
+                            .append(u.getNombre())
+                            .append("] ");
+                }
+            }
         }
         return stringBuilder.toString();
     }
