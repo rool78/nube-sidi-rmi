@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 
 public class Servidor {
 
@@ -47,8 +48,8 @@ public class Servidor {
     private void menuServidor() throws RemoteException, MalformedURLException, NotBoundException {
         int opcion = 0;
         do {
-            opcion = Gui.menu("Servidor", new String[]{
-                    "Listar Clientes", "Listar Repositorios", "Listar Parejas Repositorio-Cliente"});
+            opcion = Gui.menu("Servidor", Arrays.asList(
+                    "Listar Clientes", "Listar Repositorios", "Listar Parejas Repositorio-Cliente"));
             switch (opcion) {
                 case 1:
                     System.out.println(servicioDatos.listarClientes());

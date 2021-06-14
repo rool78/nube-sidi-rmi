@@ -17,6 +17,7 @@ import java.rmi.ConnectException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 
 public class Repositorio {
 
@@ -41,7 +42,7 @@ public class Repositorio {
             int opcion;
             do {
                 opcion = Gui.menu("Acceso a Repositorio",
-                        new String[]{"Registrar nuevo Repositorio", "Autenticar Repositorio"});
+                        Arrays.asList("Registrar nuevo Repositorio", "Autenticar Repositorio"));
                 switch (opcion) {
                     case 1:
                         registrarRepositorio();
@@ -82,8 +83,8 @@ public class Repositorio {
         levantarServicioRepositorio();
         int opcion = 0;
         do {
-            opcion = Gui.menu("Operaciones de Repositorio", new String[]
-                    {"Listar clientes", "Listar ficheros de clientes"});
+            opcion = Gui.menu("Operaciones de Repositorio", Arrays.asList(
+                    "Listar clientes", "Listar ficheros de clientes"));
             switch (opcion) {
                 case 1:
                     listarClientes();

@@ -16,6 +16,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Arrays;
 
 public class Cliente {
 
@@ -31,7 +32,6 @@ public class Cliente {
 
     public static void main(String[] args) throws RemoteException, MalformedURLException, NotBoundException {
         new Cliente().launch();
-
     }
 
     private void levantarServicios() throws MalformedURLException, RemoteException {
@@ -39,7 +39,7 @@ public class Cliente {
         Utils.setCodeBase(ServicioDiscoClienteInterface.class);
         ServicioDiscoClienteImpl servicioDiscoCliente = new ServicioDiscoClienteImpl();
         Naming.rebind(ConstantesRMI.DIRECCION_DISCO_CLIENTE + this.idSesion, servicioDiscoCliente);
-        System.out.println("Servicio cliente lavantado con exito: " + ConstantesRMI.DIRECCION_DISCO_CLIENTE + this.idSesion);
+        System.out.println("[INFO] Servicio cliente lavantado con exito: " + ConstantesRMI.DIRECCION_DISCO_CLIENTE + this.idSesion);
     }
 
     private void launch() throws MalformedURLException, NotBoundException, RemoteException {
@@ -52,8 +52,8 @@ public class Cliente {
         }
         int opcion = 0;
         do {
-            opcion = Gui.menu("Acceso de Cliente", new String[]
-                    {"Registrar un nuevo usuario", "Autenticarse en el sistema"});
+            opcion = Gui.menu("Acceso de Cliente", Arrays.asList(
+                    "Registrar un nuevo usuario", "Autenticarse en el sistema"));
             switch (opcion) {
                 case 1:
                     registrarUsuario();
@@ -76,7 +76,10 @@ public class Cliente {
             System.out.println("Usuario registrado correctamente");
             this.idSesion = respuesta;
             this.nombre = nombre;
+            levantarServicios();
             menuCliente();
+        } else {
+            System.out.println("Ha ocurrido un error en el registro");
         }
     }
 
@@ -91,9 +94,10 @@ public class Cliente {
 
         int respuesta = this.servicioAutenticacion.autenticarCliente(nombre, password);
         if (respuesta >= Respuesta.OK.getCodigo()) {
-            levantarServicios();
             System.out.println("Usuario autenticado satisfactoriamente");
+            this.idSesion = respuesta;
             this.nombre = nombre;
+            levantarServicios();
             menuCliente();
         } else {
             System.out.println("Usuario o contareña incorrectos");
@@ -103,9 +107,9 @@ public class Cliente {
     private void menuCliente() throws RemoteException, MalformedURLException, NotBoundException {
         int opcion = 0;
         do {
-            opcion = Gui.menu("Operaciones de Cliente", new String[]
-                    {"Subir fichero", "Bajar fichero", "Borrar fichero",
-                            "Listar ficheros", "Listar clientes del sistema"});
+            opcion = Gui.menu("Operaciones de Cliente", Arrays.asList(
+                    "Subir fichero", "Bajar fichero", "Borrar fichero",
+                            "Listar ficheros", "Listar clientes del sistema"));
             switch (opcion) {
                 case 1:
                     subirFichero();

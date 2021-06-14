@@ -22,7 +22,7 @@ public class ServicioDiscoClienteImpl extends UnicastRemoteObject implements Ser
     @Override
     public int bajarFichero(Fichero fichero) throws RemoteException {
         OutputStream outputStream;
-        String nombreFichero = fichero.obtenerNombre();
+        final String nombreFichero = fichero.obtenerNombre();
         try {
             outputStream = new FileOutputStream(nombreFichero);
             if (!fichero.escribirEn(outputStream)) {

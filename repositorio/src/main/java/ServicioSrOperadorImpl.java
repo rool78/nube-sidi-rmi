@@ -31,9 +31,9 @@ public class ServicioSrOperadorImpl extends UnicastRemoteObject implements Servi
     }
 
     @Override
-    public int bajarFichero(String URLdiscoCliente, String nombreFichero, int idCliente) throws MalformedURLException, RemoteException, NotBoundException {
+    public int bajarFichero(String urlDiscoCliente, String nombreFichero, int idCliente) throws MalformedURLException, RemoteException, NotBoundException {
         Fichero fichero = new Fichero(String.valueOf(idCliente), nombreFichero, String.valueOf(idCliente));
-        ServicioDiscoClienteInterface servicioDiscoCliente = (ServicioDiscoClienteInterface) Naming.lookup(URLdiscoCliente);
+        ServicioDiscoClienteInterface servicioDiscoCliente = (ServicioDiscoClienteInterface) Naming.lookup(urlDiscoCliente);
 
         int respuesta = servicioDiscoCliente.bajarFichero(fichero);
 
